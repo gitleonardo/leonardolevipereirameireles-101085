@@ -1,0 +1,24 @@
+### Criar artista
+POST http://localhost:8080/api/v1/artistas
+Content-Type: application/json
+
+{
+  "nome": "Djavan"
+}
+
+### Listar artistas (paginado)
+GET http://localhost:8080/api/v1/artistas?page=0&size=10&sort=nome,asc
+
+### Buscar artista por id
+GET http://localhost:8080/api/v1/artistas/1
+
+### Atualizar artista
+PUT http://localhost:8080/api/v1/artistas/1
+Content-Type: application/json
+
+{
+  "nome": "Djavan Atualizado"
+}
+
+### Remover artista
+DELETE http://localhost:8080/api/v1/artistas/1
