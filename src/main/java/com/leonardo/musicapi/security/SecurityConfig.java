@@ -20,7 +20,10 @@ public class SecurityConfig {
                     "/api/v1/albuns/**",
                     "/actuator/health/**",
                     "/actuator/health",
-                    "/actuator/info"
+                    "/actuator/info",
+                    "/swagger-ui/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

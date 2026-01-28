@@ -7,7 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Artistas", description = "Operações de listagem e busca de artistas")
 @RestController
 @RequestMapping("/api/v1/artistas")
 public class ArtistaController {
@@ -18,6 +21,7 @@ public class ArtistaController {
         this.artistaRepository = artistaRepository;
     }
 
+    @Operation(summary = "Listar artistas", description = "Lista artistas com paginação/ordenação e filtro opcional por nome.")
     @GetMapping
     public Page<ArtistaResumoResponse> listar(
             @RequestParam(name = "nome", required = false) String nome,

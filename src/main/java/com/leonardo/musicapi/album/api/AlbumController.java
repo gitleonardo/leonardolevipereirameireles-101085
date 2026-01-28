@@ -7,7 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Álbuns", description = "Operações de listagem e busca de albuns")
 @RestController
 @RequestMapping("/api/v1/albuns")
 public class AlbumController {
@@ -18,6 +21,7 @@ public class AlbumController {
         this.albumRepository = albumRepository;
     }
 
+    @Operation(summary = "Listar álbuns", description = "Lista álbuns com paginação/ordenação e filtro opcional por título.")
     @GetMapping
     public Page<AlbumResumoResponse> listar(
             @RequestParam(name = "titulo", required = false) String titulo,
