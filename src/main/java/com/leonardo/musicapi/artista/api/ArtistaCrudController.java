@@ -28,7 +28,7 @@ public class ArtistaCrudController {
         return artistaService.criar(request);
     }
 
-    @Operation(summary = "Buscar artista por ID", description = "Retorna os detalhes de um artista específico.")
+    @Operation(summary = "Buscar artista por ID (detalhado)", description = "Retorna os detalhes de um artista específico.")
     @GetMapping("/{id}")
     public ArtistaDetalheResponse buscarPorId(@PathVariable Long id) {
         return artistaService.buscarDetalhePorId(id);
