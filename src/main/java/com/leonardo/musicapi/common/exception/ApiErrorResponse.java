@@ -9,13 +9,20 @@ public class ApiErrorResponse {
     private final int status;
     private final String erro;
     private final String caminho;
+    private final List<String> detalhes;
     private final List<CampoErro> campos;
 
-    public ApiErrorResponse(Instant timestamp, int status, String erro, String caminho, List<CampoErro> campos) {
+    public ApiErrorResponse(Instant timestamp,
+                            int status,
+                            String erro,
+                            String caminho,
+                            List<String> detalhes,
+                            List<CampoErro> campos) {
         this.timestamp = timestamp;
         this.status = status;
         this.erro = erro;
         this.caminho = caminho;
+        this.detalhes = detalhes;
         this.campos = campos;
     }
 
@@ -33,6 +40,10 @@ public class ApiErrorResponse {
 
     public String getCaminho() {
         return caminho;
+    }
+
+    public List<String> getDetalhes() {
+        return detalhes;
     }
 
     public List<CampoErro> getCampos() {

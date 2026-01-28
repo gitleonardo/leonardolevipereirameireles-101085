@@ -42,3 +42,14 @@ GET http://localhost:8080/api/v1/artistas/1
 
 ### Desvincular álbum de um artista
 DELETE http://localhost:8080/api/v1/artistas/1/albuns/1
+
+### Teste de erro 404
+GET http://localhost:8080/api/v1/artistas/999999
+
+### Erro 400 com validação
+POST http://localhost:8080/api/v1/artistas
+Content-Type: application/json
+
+{
+  "nome": ""
+}
