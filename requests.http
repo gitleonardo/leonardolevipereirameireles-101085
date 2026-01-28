@@ -17,8 +17,28 @@ PUT http://localhost:8080/api/v1/artistas/1
 Content-Type: application/json
 
 {
-  "nome": "Djavan Atualizado"
+  "nome": "Serj Tankian"
 }
 
 ### Remover artista
 DELETE http://localhost:8080/api/v1/artistas/1
+
+### Criar album
+POST http://localhost:8080/api/v1/albuns
+Content-Type: application/json
+
+{
+  "titulo": "The Rough Dog"
+}
+
+### Listar álbuns
+GET http://localhost:8080/api/v1/albuns
+
+### Vincular álbum a um artista
+POST http://localhost:8080/api/v1/artistas/1/albuns/3
+
+### Buscar detalhe
+GET http://localhost:8080/api/v1/artistas/1
+
+### Desvincular álbum de um artista
+DELETE http://localhost:8080/api/v1/artistas/1/albuns/1

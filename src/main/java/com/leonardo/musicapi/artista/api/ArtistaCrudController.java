@@ -1,6 +1,7 @@
 package com.leonardo.musicapi.artista.api;
 
 import com.leonardo.musicapi.artista.service.ArtistaService;
+import com.leonardo.musicapi.common.dto.ArtistaDetalheResponse;
 import com.leonardo.musicapi.common.dto.ArtistaRequest;
 import com.leonardo.musicapi.common.dto.ArtistaResponse;
 import jakarta.validation.Valid;
@@ -24,8 +25,8 @@ public class ArtistaCrudController {
     }
 
     @GetMapping("/{id}")
-    public ArtistaResponse buscarPorId(@PathVariable Long id) {
-        return artistaService.buscarPorId(id);
+    public ArtistaDetalheResponse buscarPorId(@PathVariable Long id) {
+        return artistaService.buscarDetalhePorId(id);
     }
 
     @PutMapping("/{id}")
