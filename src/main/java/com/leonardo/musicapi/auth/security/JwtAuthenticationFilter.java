@@ -1,29 +1,27 @@
 package com.leonardo.musicapi.auth.security;
 
-import com.leonardo.musicapi.auth.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService) {
         this.jwtService = jwtService;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -37,22 +35,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = auth.substring(7);
+        String token = auth.substring("Bearer ".length());
 
         try {
-            Claims claims = jwtService.parseClaims(token);
-            Object type = claims.get("type");
-            if (type != null && "access".equals(type.toString())) {
-                String username = claims.getSubject();
-                UserDetails user = userDetailsService.loadUserByUsername(username);
+            Jws<Claims> jws = jwtService.validar(token);
 
-                UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            // JJWT 0.12.x: getBody() deprecated -> use getPayload()
+            Claims claims = jws.getPayload();
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception ignored) {
-            // Token inválido/expirado -> segue sem autenticar (o Security vai barrar depois)
+            String username = claims.getSubject();
+            Object rolesObj = claims.get("roles");
+
+            List<String> roles = rolesObj instanceof List<?> l
+                    ? l.stream().map(String::valueOf).toList()
+                    : List.of();
+
+            var authorities = roles.stream()
+                    .map(r -> r.startsWith("ROLE_") ? r : "ROLE_" + r)
+                    .map(SimpleGrantedAuthority::new)
+                    .toList();
+
+            var authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
         }
 
         filterChain.doFilter(request, response);

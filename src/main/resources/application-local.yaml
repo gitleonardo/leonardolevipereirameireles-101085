@@ -1,13 +1,15 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/musicapi
-    username: musicapi
-    password: musicapi
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-
-  flyway:
-    enabled: true
+app:
+  security:
+    jwt:
+      secret: "chave-local-bem-grande-com-mais-de-32-caracteres-1234567890"
+      issuer: "musicapi"
+      access-token-minutes: 5
+      refresh-token-minutes: 60
+    cors:
+      allowed-origins:
+        - "http://localhost:3000"
+        - "http://localhost:8080"
+    users:
+      - username: "admin"
+        password: "admin123"
+        roles: ["ADMIN"]
