@@ -2,33 +2,34 @@ package com.leonardo.musicapi.auth.service;
 
 import com.leonardo.musicapi.auth.dto.TokenResponse;
 import com.leonardo.musicapi.auth.security.JwtService;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import io.jsonwebtoken.Claims;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
 
-    private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
-    public AuthService(AuthenticationManager authenticationManager, JwtService jwtService) {
-        this.authenticationManager = authenticationManager;
+    public AuthService(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
+        this.userDetailsService = userDetailsService;
     }
 
-    public TokenResponse login(String username, String password) {
-        Authentication auth = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
+    public TokenResponse refresh(String refreshToken) {
+        Claims claims = jwtService.validarRefreshEObterClaims(refreshToken);
 
-        var roles = auth.getAuthorities().stream()
+        String username = claims.getSubject();
+
+        var user = userDetailsService.loadUserByUsername(username);
+        var roles = user.getAuthorities().stream()
                 .map(a -> a.getAuthority().replace("ROLE_", ""))
                 .toList();
 
-        String access = jwtService.gerarAccessToken(username, roles);
-        String refresh = jwtService.gerarRefreshToken(username);
-        return new TokenResponse(access, refresh);
+        String newAccess = jwtService.gerarAccessToken(username, roles);
+
+        // mantém o mesmo refresh (mais simples). Se quiser rotação, eu te passo abaixo.
+        return new TokenResponse(newAccess, refreshToken);
     }
 }

@@ -77,14 +77,11 @@ public class ApiSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                     // públicos
                     .requestMatchers(
-                            "/api/v1/health/**",
-                            "/api/v1/auth/**",
+                            "/actuator/health",
                             "/swagger-ui/**",
                             "/v3/api-docs/**",
-                            "/swagger-ui.html",
-                            "/actuator/health/**",
-                            "/actuator/health",
-                            "/actuator/info"
+                            "/api/v1/auth/login",
+                            "/api/v1/auth/refresh"
                     ).permitAll()
                     // opcional: permitir GET de listagem pública (se quiser). Senão comente.
                     .requestMatchers(HttpMethod.GET, "/api/v1/artistas/**", "/api/v1/albuns/**").authenticated()

@@ -3,6 +3,7 @@ package com.leonardo.musicapi.auth.security;
 import com.leonardo.musicapi.auth.config.SecurityProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class JwtService {
 
     public String gerarAccessToken(String username, List<String> roles) {
         Instant now = Instant.now();
-        Instant exp = now.plusSeconds(props.getJwt().getAccessTokenMinutes() * 60L);
+        Instant exp = now.plusSeconds(props.getJwt().getAccessTokenMinutes() * 60);
 
         return Jwts.builder()
                 .issuer(props.getJwt().getIssuer())
@@ -40,7 +41,7 @@ public class JwtService {
 
     public String gerarRefreshToken(String username) {
         Instant now = Instant.now();
-        Instant exp = now.plusSeconds(props.getJwt().getRefreshTokenMinutes() * 60L);
+        Instant exp = now.plusSeconds(props.getJwt().getRefreshTokenMinutes() * 60);
 
         return Jwts.builder()
                 .issuer(props.getJwt().getIssuer())
@@ -53,11 +54,21 @@ public class JwtService {
     }
 
     public Jws<Claims> validar(String token) {
-        // JJWT 0.12.x: parserBuilder() virou parser().verifyWith(...).build()
         return Jwts.parser()
-                .verifyWith(key)
                 .requireIssuer(props.getJwt().getIssuer())
+                .verifyWith((javax.crypto.SecretKey) key)
                 .build()
                 .parseSignedClaims(token);
+    }
+
+     public Claims validarRefreshEObterClaims(String refreshToken) {
+        Jws<Claims> jws = validar(refreshToken);
+        Claims claims = jws.getPayload(); // (substitui o getBody/getPayload conforme sua lib)
+
+        Object type = claims.get("type");
+        if (!"refresh".equals(String.valueOf(type))) {
+            throw new JwtException("Token não é refresh");
+        }
+        return claims;
     }
 }
