@@ -20,3 +20,21 @@ springdoc:
     path: /swagger-ui
   api-docs:
     path: /v3/api-docs
+
+app:
+  security:
+    cors:
+      allowed-origins:
+        - "http://localhost:5173"
+        - "http://localhost:4200"
+        - "http://localhost:3000"
+        - "http://localhost:8080"
+    jwt:
+      secret: "troque-essa-chave-para-uma-bem-grande-e-secreta-com-pelo-menos-32-caracteres"
+      issuer: "musicapi"
+      access-token-minutes: 5
+      refresh-token-minutes: 60
+    users:
+      - username: "admin"
+        password: "admin123"
+        roles: ["ADMIN"]
